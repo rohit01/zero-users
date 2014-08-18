@@ -1,0 +1,15 @@
+---
+# Zero-Users - automated user management system
+- include_vars: "user_team_membership.yml"
+- include_vars: "user_sudo_access_details.yml"
+- include_vars: "obsolete_user_list.yml"
+
+# Validate project configurations
+- include: validate_configuration.yml
+
+# Check validate mode and execute tasks
+- include: manage_user.yml
+  when: "not ({{ validate_mode | default(False) }})"
+
+- include: sudo_access.yml
+  when: "not ({{ validate_mode | default(False) }})"

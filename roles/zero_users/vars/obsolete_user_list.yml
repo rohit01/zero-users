@@ -1,0 +1,13 @@
+# This file contains the list of all obsolete users. The users can potentially
+# be your X team members. Define it as a list
+#
+# obsolete_user_list:
+#   - obsolute_user_1
+#   - obsolute_user_2
+#
+# If you dont need to ensure deleted users, configure it with a blank list:
+#
+# obsolete_user_list: []
+#
+# By default, it is configured as a blank list:
+obsolete_user_list: []

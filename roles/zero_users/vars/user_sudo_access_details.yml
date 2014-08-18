@@ -1,0 +1,25 @@
+# This file contains the list of all users who has sudo access and the group of
+# servers in which they should have it. In ansible terminology, you need to
+# define a dictionary variable: 'user_sudo_access_details'. The keys should be
+# username and value should be the list of inventory groups.
+# Here's an example:
+#
+# user_sudo_access_details:
+#   rohit01:
+#     - team_devops
+#   rohit02:
+#     - team_ui_ux
+#
+# In the above example, we used 'team_' as prefix to separate user management
+# groups from usual server management ones. All groups defined above should be
+# present in inventory file. The users defined here need to be a subset of
+# users defined in variable 'user_team_membership'
+#
+# If you don't want to grant sudo access to any user, declare this as an empty
+# dictionary variable like below:
+#
+# user_sudo_access_details: {}
+#
+
+# By default, no user is granted sudo access.
+user_sudo_access_details: {}

@@ -1,0 +1,4 @@
+# 'remove_home' is an extra variable to force delete home directories of
+# users being deleted. Possible values: true, false
+
+remove_home_dir: "{{ remove_home | default(False) }}"

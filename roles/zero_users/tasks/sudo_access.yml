@@ -1,0 +1,32 @@
+---
+#### Tasks for sudo access management ####
+- name: "Include /etc/sudoers.d in sudoers file"
+  lineinfile: >
+    dest="/etc/sudoers"
+    line="#includedir /etc/sudoers.d"
+    state="present"
+    validate='visudo -cf %s'
+
+- name: "Grant full sudo access for configured users"
+  template: >
+    src="sudoers_file.j2"
+    dest="/etc/sudoers.d/{{ item.key }}"
+    owner="root"
+    group="root"
+    mode="0400"
+    validate='visudo -cf %s'
+  when: "'{{ item.value | intersect(group_names) | join('') }}' != ''"
+  with_dict: user_sudo_access_details | default({})
+
+- name: "Remove sudo access from unintended servers"
+  file: >
+    path="/etc/sudoers.d/{{ item.key }}"
+    state="absent"
+  when: "'{{ item.value | intersect(group_names) | join('') }}' == ''"
+  with_dict: user_sudo_access_details | default({})
+
+- name: "Remove sudo access for users not in sudo list"
+  file: >
+    path="/etc/sudoers.d/{{ item.key }}"
+    state="absent"
+  with_items: user_team_membership | difference(user_sudo_access_details) | list | default([])

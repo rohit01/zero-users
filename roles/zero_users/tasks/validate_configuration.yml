@@ -1,0 +1,47 @@
+---
+# Validate zero-users configuration
+- name: "Check if necessary variables are defined"
+  assert:
+    that:
+      - '"{{ user_team_membership | default("X Y") }}" != "X Y"'
+      - '"{{ user_sudo_access_details | default("X Y") }}" != "X Y"'
+      - '"{{ obsolete_user_list | default("X Y") }}" != "X Y"'
+
+- name: "Verify that variable 'obsolete_user_list' is a valid list"
+  assert:
+    that:
+      - '"{{ obsolete_user_list | list | default("X Y") }}" != "X Y"'
+
+- name: "Verify that variable 'user_team_membership' is a valid dictionary with values as list"
+  assert:
+    that:
+      - '"{{ item.value | list | join }}" != "X Y"'
+  with_dict: user_team_membership
+
+- name: "Verify that variable 'user_sudo_access_details' is a valid dictionary with values as list"
+  assert:
+    that:
+      - '"{{ item.value | list | join }}" != "X Y"'
+  with_dict: user_sudo_access_details
+
+- name: "Verify that user public keys are added at location files/public_keys/<username> with filename 'id_rsa.pub'"
+  assert:
+    that:
+      - "'{{ lookup('file', 'public_keys/' + item.key + '/id_rsa.pub') }}' != ''"
+  with_dict: user_team_membership
+
+- name: "Verify that obsolete_user_list and user_team_membership has no user in common"
+  assert:
+    that:
+      - "'{{ obsolete_user_list | intersect(user_team_membership) | join }}' == ''"
+
+- name: "Verify that user_sudo_access_details users is a subset of user_team_membership"
+  assert:
+    that:
+      - "'{{ user_sudo_access_details | difference(user_team_membership) | join }}' == ''"
+
+- name: "Verify that variable obsolete user keys are deleted from repository"
+  assert:
+    that:
+      - "'{{ lookup('file', 'public_keys/' + item + '/id_rsa.pub') }}' == ''"
+  with_items: obsolete_user_list

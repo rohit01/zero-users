@@ -1,0 +1,27 @@
+# This file contains the list of all users and the group of servers, where
+# they need to be created. In ansible terminology, you need to define a
+# dictionary variable - 'user_team_membership'. The keys should be username
+# and value should be the list of inventory groups.
+# Here's an example:
+#
+# user_team_membership:
+#   rohit01:
+#     - team_admins
+#     - team_devops
+#   rohit02:
+#     - team_ui_ux
+#   rohit03:
+#     - team_developers
+#
+# In the above example, we used 'team_' as prefix to separate user management
+# groups from usual server management ones. All groups defined above should be
+# present in inventory file
+#
+# If you don't want to create any users, then declare this as an empty
+# dictionary variable like below:
+#
+# user_team_membership: {}
+#
+
+# By default, no user is configured to be created.
+user_team_membership: {}

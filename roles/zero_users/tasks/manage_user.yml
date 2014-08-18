@@ -1,0 +1,99 @@
+---
+#### Tasks for user management ####
+
+#### Create users defined in user_team_membership for valid hosts ####
+- name: "Create user groups"
+  group: >
+    name="{{ item.key }}"
+    state="present"
+  when: "'{{ item.value | intersect(group_names) | join('') }}' != ''"
+  with_dict: user_team_membership | default({})
+
+- name: "Create users"
+  user: >
+    name="{{ item.key }}"
+    group="{{ item.key }}"
+    home="/home/{{ item.key }}"
+    createhome=yes
+    move_home=yes
+    comment="User created by Konfilarity"
+    shell="/bin/bash"
+    state="present"
+  when: "'{{ item.value | intersect(group_names) | join('') }}' != ''"
+  with_dict: user_team_membership | default({})
+
+#### Add ssh key based authentication ####
+- name: "Setup key based ssh authentication"
+  authorized_key: >
+    user="{{ item.key }}"
+    key="{{ lookup('file', 'public_keys/' + item.key + '/id_rsa.pub') }}"
+    manage_dir=yes
+    state="present"
+  with_dict: user_team_membership | default({})
+
+#### Security: Delete ssh credential on servers ####
+- name: "Delete users private key -- as a security measure"
+  file: >
+    path="/home/{{ item.key }}/.ssh/id_rsa"
+    state="absent"
+  when: "'{{ item.value | intersect(group_names) | join('') }}' != ''"
+  with_dict: user_team_membership | default({})
+
+- name: "Delete users public key -- as a security measure"
+  file: >
+    path="/home/{{ item.key }}/.ssh/id_rsa.pub"
+    state="absent"
+  when: "'{{ item.value | intersect(group_names) | join('') }}' != ''"
+  with_dict: user_team_membership | default({})
+
+#### Delete configured users from unintended servers ####
+- name: "Delete configured users from unintended servers"
+  user: >
+    name="{{ item.key }}"
+    force="yes"
+    remove="{{ remove_home_dir }}"
+    state="absent"
+  when: "'{{ item.value | intersect(group_names) | join('') }}' == ''"
+  with_dict: user_team_membership | default({})
+
+- name: "Delete home directory, if extra argument- remove_home is passed as true"
+  file: >
+    path="/home/{{ item.key }}"
+    state="absent"
+  when: "{{ remove_home_dir }} and ('{{ item.value | intersect(group_names) | join('') }}' == '')"
+  with_dict: "user_team_membership | default({})"
+
+- name: "Delete user groups from unintended servers"
+  group:
+    name="{{ item.key }}"
+    state="absent"
+  when: "'{{ item.value | intersect(group_names) | join('') }}' == ''"
+  with_dict: user_team_membership | default({})
+
+#### Delete obsolete users from all servers ####
+- name: "Delete obsolete users"
+  user: >
+    name="{{ item }}"
+    force="yes"
+    remove="{{ remove_home_dir }}"
+    state="absent"
+  with_items: obsolete_user_list
+
+- name: "Remove sudo access for obsolete users"
+  file: >
+    path="/etc/sudoers.d/{{ item }}"
+    state="absent"
+  with_items: obsolete_user_list
+
+- name: "Delete home directory, if extra argument- remove_home is passed as true"
+  file: >
+    path="/home/{{ item }}"
+    state="absent"
+  when: "{{ remove_home_dir }}"
+  with_items: obsolete_user_list
+
+- name: "Delete obsolete user groups"
+  group:
+    name="{{ item }}"
+    state="absent"
+  with_items: obsolete_user_list

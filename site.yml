@@ -1,0 +1,10 @@
+---
+- hosts: all
+  gather_facts: no
+  # Add user if you want ansible to force custom user
+  # user: <username>
+  sudo: yes
+
+  roles:
+    # Ansible role for user management
+    - zero_users
