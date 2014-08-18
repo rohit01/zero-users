@@ -12,5 +12,5 @@ This directory contains the public keys of all users configured in this project.
 
 For user rohit, the following needs to be done:
 
-`$ mkdir rohit`
+`$ mkdir rohit`  
 `$ cp <path_of_user_public_key> rohit/id_rsa.pub`
