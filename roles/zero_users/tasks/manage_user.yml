@@ -29,6 +29,7 @@
     key="{{ lookup('file', 'public_keys/' + item.key + '/id_rsa.pub') }}"
     manage_dir=yes
     state="present"
+  when: "'{{ item.value | intersect(group_names) | join('') }}' != ''"
   with_dict: user_team_membership | default({})
 
 #### Security: Delete ssh credential on servers ####
