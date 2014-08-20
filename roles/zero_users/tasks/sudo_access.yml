@@ -27,6 +27,6 @@
 
 - name: "Remove sudo access for users not in sudo list"
   file: >
-    path="/etc/sudoers.d/{{ item.key }}"
+    path="/etc/sudoers.d/{{ item }}"
     state="absent"
   with_items: user_team_membership | difference(user_sudo_access_details) | list | default([])
