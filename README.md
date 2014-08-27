@@ -1,7 +1,7 @@
 zero-users: Zero hassle user management
 =======================================
 
-zero-users is an ansible project to perform linux user management with minimum configuration and built in validation for these configurations. Users, created using zero-users, can login to servers using key based authentication.
+zero-users is an ansible project to perform linux user management with minimum configuration with built in validation. Users, created using zero-users, can ssh into servers using key based authentication.
 
 Prerequisites
 =============
@@ -20,7 +20,7 @@ Instructions
 
 * **Configure**:
 
-    1. Define your servers in an ansible inventory file. For examples, see the [inventory/](inventory/) directory
+    1. Define servers in an ansible inventory file. See examples in the [inventory/](inventory/) directory
     2. Define users, sudo access permission in the variable file [here](roles/zero_users/vars/)
     3. Place the users ssh public key [here](roles/zero_users/files/public_keys/)
 
