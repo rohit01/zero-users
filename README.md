@@ -18,6 +18,8 @@ Features
 Instructions
 ============
 
+* **Note**: The documentation is divided into multiple files and directory. Configuration files & directories may contain useful info specific to the area. Please check for README.md file at configuration directories and comments in variable files before making changes.
+
 * **Configure**:
 
     1. Define servers in an ansible inventory file. See examples in the [inventory/](inventory/) directory
