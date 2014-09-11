@@ -32,6 +32,23 @@
   when: "'{{ item.value | intersect(group_names) | join('') }}' != ''"
   with_dict: user_team_membership | default({})
 
+- name: "Make sure home directory ownership is correct"
+  file: >
+    path="/home/{{ item.key }}"
+    owner="{{ item.key }}"
+    group="{{ item.key }}"
+  when: "'{{ item.value | intersect(group_names) | join('') }}' != ''"
+  with_dict: user_team_membership | default({})
+
+- name: "Make sure ssh directory ownership is correct"
+  file: >
+    path="/home/{{ item.key }}/.ssh/"
+    owner="{{ item.key }}"
+    group="{{ item.key }}"
+    recurse=yes
+  when: "'{{ item.value | intersect(group_names) | join('') }}' != ''"
+  with_dict: user_team_membership | default({})
+
 #### Security: Delete ssh credential on servers ####
 - name: "Delete users private key -- as a security measure"
   file: >
